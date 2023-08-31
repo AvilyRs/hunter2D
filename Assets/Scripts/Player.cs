@@ -6,7 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private new Rigidbody2D rigidbody;
-    public GameObject attackAreaRef;
+    public GameObject attackArea;
     public GameObject feetAreaRef;
     private Animator animator;
     public LayerMask feetLayerToCheckCollider;
@@ -44,7 +44,6 @@ public class Player : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(feetAreaRef.transform.position, new Vector2(feetAreaSizeX, feetAreaSizeY));
-        Gizmos.DrawWireSphere(attackAreaRef.transform.position, attackAreaSize);
     }
 
     void Movement()
@@ -74,19 +73,12 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
-
+            attackArea.SetActive(true);
             originalMoveSpeed = moveSpeed;
             moveSpeed = 0;
 
             isAttacking = true;
             animator.SetInteger("Transition", 4);
-
-            Collider2D attackArea = Physics2D.OverlapCircle(attackAreaRef.transform.position, attackAreaSize);
-
-            if (attackArea != null)
-            {
-                Debug.Log("Criou");
-            }
 
             StartCoroutine(AfterAttack());
         }
@@ -97,6 +89,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.03f);
         isAttacking = false;
         moveSpeed = originalMoveSpeed;
+        attackArea.SetActive(false);
 
         if (jumpCount > 0)
         {
