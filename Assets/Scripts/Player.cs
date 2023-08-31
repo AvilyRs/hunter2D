@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GameObject attackAreaRef;
-    private Rigidbody2D rigidbody;
+    private new Rigidbody2D rigidbody;
     private Animator animator;
 
     public float attackAreaSize = 0.14f;
@@ -70,14 +70,7 @@ public class Player : MonoBehaviour
             {
                 Debug.Log("Criou");
             }
-
         }
-    }
-
-    IEnumerator AfterAttack(float settedMoveSpeed)
-    {
-        yield return new WaitForSeconds(0.2f);
-        moveSpeed = settedMoveSpeed;
     }
 
     void Jump()
