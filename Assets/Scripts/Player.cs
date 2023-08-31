@@ -1,14 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameObject attackAreaRef;
     private new Rigidbody2D rigidbody;
+    public GameObject attackAreaRef;
+    public GameObject feetAreaRef;
     private Animator animator;
+    public LayerMask feetLayerToCheckCollider;
 
     public float attackAreaSize = 0.14f;
+    public float feetAreaSizeX = 0.10f;
+    public float feetAreaSizeY = 0.10f;
     public float jumpForce = 10f;
     public float moveSpeed = 5f;
     private int jumpCount = 0;
@@ -29,10 +34,12 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         Movement();
+        CheckFeetCollision();
     }
 
     void OnDrawGizmos()
     {
+        Gizmos.DrawWireCube(feetAreaRef.transform.position, new Vector2(feetAreaSizeX, feetAreaSizeY));
         Gizmos.DrawWireSphere(attackAreaRef.transform.position, attackAreaSize);
     }
 
@@ -80,22 +87,28 @@ public class Player : MonoBehaviour
             rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpCount += 1;
 
-            if (jumpCount == 1)
+            if (jumpCount == 0)
             {
                 animator.SetInteger("Transition", 2);
-            } else if (jumpCount == 2)
+            } else if (jumpCount == 1)
             {
                 animator.SetInteger("Transition", 3);
             }
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void CheckFeetCollision()
     {
-        if (collision.gameObject.layer == 8)
+        Collider2D feetCollider = Physics2D.OverlapBox(
+            feetAreaRef.transform.position,
+            new Vector2(feetAreaSizeX, feetAreaSizeY),
+            transform.rotation.x, feetLayerToCheckCollider
+        );
+
+        if (feetCollider != null)
         {
+            Debug.Log(feetCollider.name);
             jumpCount = 0;
-            animator.SetInteger("Transition", 0);
         }
     }
 }
