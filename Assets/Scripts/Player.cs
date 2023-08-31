@@ -11,11 +11,15 @@ public class Player : MonoBehaviour
     private Animator animator;
     public LayerMask feetLayerToCheckCollider;
 
+    private bool isAttacking = false;
+
+    public float jumpForce = 10f;
+    public float moveSpeed = 5f;
+    private float originalMoveSpeed = 0;
+
     public float attackAreaSize = 0.14f;
     public float feetAreaSizeX = 0.10f;
     public float feetAreaSizeY = 0.10f;
-    public float jumpForce = 10f;
-    public float moveSpeed = 5f;
     private int jumpCount = 0;
     public float attackAnimationDuration = 0.2f;
 
@@ -70,13 +74,33 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
+
+            originalMoveSpeed = moveSpeed;
+            moveSpeed = 0;
+
+            isAttacking = true;
             animator.SetInteger("Transition", 4);
+
             Collider2D attackArea = Physics2D.OverlapCircle(attackAreaRef.transform.position, attackAreaSize);
 
             if (attackArea != null)
             {
                 Debug.Log("Criou");
             }
+
+            StartCoroutine(AfterAttack());
+        }
+    }
+
+    IEnumerator AfterAttack()
+    {
+        yield return new WaitForSeconds(0.03f);
+        isAttacking = false;
+        moveSpeed = originalMoveSpeed;
+
+        if (jumpCount > 0)
+        {
+            animator.SetInteger("Transition", 1);
         }
     }
 
@@ -87,12 +111,17 @@ public class Player : MonoBehaviour
             rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpCount += 1;
 
-            if (jumpCount == 0)
+            if (!isAttacking)
             {
-                animator.SetInteger("Transition", 2);
-            } else if (jumpCount == 1)
-            {
-                animator.SetInteger("Transition", 3);
+                if (jumpCount == 1)
+                {
+                    animator.SetInteger("Transition", 2);
+                }
+
+                if (jumpCount == 2)
+                {
+                    animator.SetInteger("Transition", 3);
+                }
             }
         }
     }
@@ -107,7 +136,6 @@ public class Player : MonoBehaviour
 
         if (feetCollider != null)
         {
-            Debug.Log(feetCollider.name);
             jumpCount = 0;
         }
     }
