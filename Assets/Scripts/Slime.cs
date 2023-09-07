@@ -9,8 +9,6 @@ public class Slime : Enemy
     public GameObject colliderAreaRef;
     public LayerMask layerToCheckCollider;
 
-    private bool isReceivingDamage = false;
-
     public float colliderAreaSize;
 
     public float moveSpeed = 1;
@@ -40,8 +38,6 @@ public class Slime : Enemy
 
     public override void OnReceiveDamage(int receivedDamage)
     {
-        isReceivingDamage = true;
-
         health -= receivedDamage;
 
         if (health <= 0)
