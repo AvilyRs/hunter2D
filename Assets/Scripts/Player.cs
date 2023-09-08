@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
 
     void Attack()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetKeyDown(KeyCode.X))
         {
             if (!isAttacking)
             {
@@ -110,9 +110,9 @@ public class Player : MonoBehaviour
                 rigidbody.velocity = Vector2.zero;
                 animator.SetTrigger("Attack");
 
-                if (attackArea.gameObject.CompareTag("Enemy"))
+                if (attackArea.CompareTag("Enemy"))
                 {
-                    Enemy enemy = attackArea.gameObject.GetComponent<Enemy>();
+                    Enemy enemy = attackArea.GetComponent<Enemy>();
                     enemy.OnReceiveDamage(damage);
                 }
 
@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             if (isGrounded)
             {
@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
             } else if (jumpsToUse > 0)
             {
                 rigidbody.velocity = Vector2.up * jumpForce;
-                animator.SetTrigger("Jump");
+                animator.SetTrigger("Double Jump");
 
                 jumpsToUse -= 1;
             }

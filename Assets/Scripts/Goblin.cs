@@ -6,7 +6,9 @@ public class Goblin : Enemy
 {
     private new Rigidbody2D rigidbody;
     public GameObject raycastPointRef;
-    private Vector2 raycastDirection;
+    public GameObject raycastBehindRef;
+    public Vector2 raycastDirection;
+    public Vector2 raycastBehindDirection;
     private Collider2D attackArea;
     private Animator animator;
 
@@ -49,6 +51,7 @@ public class Goblin : Enemy
     private void OnDrawGizmos()
     {
         Gizmos.DrawRay(raycastPointRef.transform.position, raycastDirection * visionArea);
+        Gizmos.DrawRay(raycastBehindRef.transform.position, raycastBehindDirection * visionArea);
         Gizmos.DrawWireSphere(attackAreaRef.transform.position, attackAreaSize);
     }
 
@@ -69,10 +72,12 @@ public class Goblin : Enemy
         {
             transform.eulerAngles = new Vector2(0, 0);
             raycastDirection = Vector2.right;
+            raycastBehindDirection = Vector2.left / 2;
         } else
         {
             transform.eulerAngles = new Vector2(0, 180);
             raycastDirection = Vector2.left;
+            raycastBehindDirection = Vector2.right / 2;
         }
     }
 
@@ -103,6 +108,7 @@ public class Goblin : Enemy
     void DetectVision()
     {
         RaycastHit2D collidedObject = Physics2D.Raycast(raycastPointRef.transform.position, raycastDirection, visionArea);
+        RaycastHit2D behindCollidedObject = Physics2D.Raycast(raycastBehindRef.transform.position, raycastBehindDirection, visionArea);
 
 
         if (collidedObject.collider != null && collidedObject.collider.gameObject.CompareTag("Player"))
@@ -113,6 +119,11 @@ public class Goblin : Enemy
         {
             isRage = false;
             rigidbody.velocity = Vector2.zero;
+        }
+
+        if (behindCollidedObject.collider != null && behindCollidedObject.collider.gameObject.CompareTag("Player"))
+        {
+            isVisionToRight = !isVisionToRight;
         }
     }
 
