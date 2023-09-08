@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
     public int damage = 1;
     public bool damageOnCollision = false;
 
+    public bool damageOnCollisionEnabled = true;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Attack Area"))
@@ -18,17 +20,31 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if (damageOnCollision)
         {
-            if (collision.gameObject.CompareTag("Player"))
+            if (collision.gameObject.CompareTag("Player") && damageOnCollisionEnabled)
             {
                 Player player = collision.gameObject.GetComponent<Player>();
                 player.OnReceiveDamage(damage);
+
+                DisableDamageOnCollision();
+                Invoke(nameof(EnableDamageOnCollision), 1f);
             }
         }
     }
+
+    private void EnableDamageOnCollision()
+    {
+        damageOnCollisionEnabled = true;
+    }
+
+    private void DisableDamageOnCollision()
+    {
+        damageOnCollisionEnabled = false;
+    }
+
 
     // Method used to be overrided by the class that will extend.
     // Have to be created because this method is used here
